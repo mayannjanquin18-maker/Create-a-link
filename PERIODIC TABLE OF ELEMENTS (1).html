@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Periodic Table of Elements</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom right, #1e3c72, #2a5298, #7e22ce);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            padding: 45px;
+            max-width: 850px;
+            width: 100%;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #1e3c72;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .element-counter {
+            color: #666;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .exit-btn {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: linear-gradient(135deg, #ff4757, #ff6348);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.4);
+        }
+        
+        .exit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 71, 87, 0.6);
+        }
+
+        .element-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 25px;
+            padding: 40px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            margin-bottom: 30px;
+        }
+
+        .atomic-number {
+            font-size: 22px;
+            opacity: 0.9;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .element-symbol {
+            font-size: 110px;
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            line-height: 1;
+        }
+
+        .element-name {
+            font-size: 40px;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .info-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .info-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .info-label {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-value {
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .category-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.25);
+            padding: 10px 25px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: 600;
+            margin-top: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .navigation {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .nav-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 16px 45px;
+            font-size: 17px;
+            font-weight: bold;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(79, 172, 254, 0.4);
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.6);
+        }
+
+        .nav-btn:disabled {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+            cursor: not-allowed;
+            opacity: 0.5;
+            box-shadow: none;
+        }
+        
+        .prev-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .exit-screen {
+            display: none;
+            text-align: center;
+            padding: 100px 40px;
+        }
+
+        .exit-screen h2 {
+            font-size: 50px;
+            color: #1e3c72;
+            margin-bottom: 20px;
+        }
+
+        .exit-screen p {
+            font-size: 22px;
+            color: #666;
+        }
+        
+        @media (max-width: 600px) {
+            .element-symbol {
+                font-size: 80px;
+            }
+            
+            .element-name {
+                font-size: 30px;
+            }
+            
+            .info-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="exit-btn" onclick="exitApp()">EXIT</button>
+        
+          <div id="mainContent">
+            <div class="header">
+                <h1>Periodic Table of Elements</h1>
+                <div class="element-counter" id="counter"></div>
+            </div>
+
+            <div class="element-card">
+                <div class="atomic-number" id="atomicNumberLabel"></div>
+                <div class="element-symbol" id="symbol"></div>
+                <div class="element-name" id="name"></div>
+                
+                <div class="info-container">
+                    <div class="info-card">
+                        <div class="info-label">Atomic Number</div>
+                        <div class="info-value" id="atomicNum"></div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-label">Atomic Weight</div>
+                        <div class="info-value" id="atomicWeight"></div>
+                    </div>
+                </div>
+            
+              <div class="category-badge" id="category"></div>
+            </div>
+
+            <div class="navigation">
+                <button class="nav-btn prev-btn" onclick="previousElement()" id="prevBtn">
+                    ◄ PREVIOUS
+                </button>
+                <button class="nav-btn" onclick="nextElement()" id="nextBtn">
+                    NEXT ►
+                </button>
+            </div>
+        </div>
+
+        <div id="exitScreen" class="exit-screen">
+            <h2>🎓 Thank You!</h2>
+            <p>Thanks for exploring all 118 elements of the Periodic Table!</p>
+        </div>
+    </div>
+    
+    <script>
+        const elements = [
+            {num: 1, sym: "H", name: "Hydrogen", weight: "1.008", cat: "Nonmetal"},
+            {num: 2, sym: "He", name: "Helium", weight: "4.003", cat: "Noble Gas"},
+            {num: 3, sym: "Li", name: "Lithium", weight: "6.94", cat: "Alkali Metal"},
+            {num: 4, sym: "Be", name: "Beryllium", weight: "9.012", cat: "Alkaline Earth Metal"},
+            {num: 5, sym: "B", name: "Boron", weight: "10.81", cat: "Metalloid"},
+            {num: 6, sym: "C", name: "Carbon", weight: "12.01", cat: "Nonmetal"},
+            {num: 7, sym: "N", name: "Nitrogen", weight: "14.01", cat: "Nonmetal"},
+            {num: 8, sym: "O", name: "Oxygen", weight: "16.00", cat: "Nonmetal"},
+            {num: 9, sym: "F", name: "Fluorine", weight: "19.00", cat: "Halogen"},
+            {num: 10, sym: "Ne", name: "Neon", weight: "20.18", cat: "Noble Gas"},
+            {num: 11, sym: "Na", name: "Sodium", weight: "22.99", cat: "Alkali Metal"},
+            {num: 12, sym: "Mg", name: "Magnesium", weight: "24.31", cat: "Alkaline Earth Metal"},
+            {num: 13, sym: "Al", name: "Aluminum", weight: "26.98", cat: "Post-Transition Metal"},
+            {num: 14, sym: "Si", name: "Silicon", weight: "28.09", cat: "Metalloid"},
+            {num: 15, sym: "P", name: "Phosphorus", weight: "30.97", cat: "Nonmetal"},
+            {num: 16, sym: "S", name: "Sulfur", weight: "32.07", cat: "Nonmetal"},
+            {num: 17, sym: "Cl", name: "Chlorine", weight: "35.45", cat: "Halogen"},
+            {num: 18, sym: "Ar", name: "Argon", weight: "39.95", cat: "Noble Gas"},
+            {num: 19, sym: "K", name: "Potassium", weight: "39.10", cat: "Alkali Metal"},
+            {num: 20, sym: "Ca", name: "Calcium", weight: "40.08", cat: "Alkaline Earth Metal"},
+            {num: 21, sym: "Sc", name: "Scandium", weight: "44.96", cat: "Transition Metal"},
+            {num: 22, sym: "Ti", name: "Titanium", weight: "47.87", cat: "Transition Metal"},
+            {num: 23, sym: "V", name: "Vanadium", weight: "50.94", cat: "Transition Metal"},
+            {num: 24, sym: "Cr", name: "Chromium", weight: "52.00", cat: "Transition Metal"},
+            {num: 25, sym: "Mn", name: "Manganese", weight: "54.94", cat: "Transition Metal"},
+            {num: 26, sym: "Fe", name: "Iron", weight: "55.85", cat: "Transition Metal"},
+            {num: 27, sym: "Co", name: "Cobalt", weight: "58.93", cat: "Transition Metal"},
+            {num: 28, sym: "Ni", name: "Nickel", weight: "58.69", cat: "Transition Metal"},
+            {num: 29, sym: "Cu", name: "Copper", weight: "63.55", cat: "Transition Metal"},
+            {num: 30, sym: "Zn", name: "Zinc", weight: "65.38", cat: "Transition Metal"},
+            {num: 31, sym: "Ga", name: "Gallium", weight: "69.72", cat: "Post-Transition Metal"},
+            {num: 32, sym: "Ge", name: "Germanium", weight: "72.63", cat: "Metalloid"},
+            {num: 33, sym: "As", name: "Arsenic", weight: "74.92", cat: "Metalloid"},
+            {num: 34, sym: "Se", name: "Selenium", weight: "78.97", cat: "Nonmetal"},
+            {num: 35, sym: "Br", name: "Bromine", weight: "79.90", cat: "Halogen"},
+            {num: 36, sym: "Kr", name: "Krypton", weight: "83.80", cat: "Noble Gas"},
+            {num: 37, sym: "Rb", name: "Rubidium", weight: "85.47", cat: "Alkali Metal"},
+            {num: 38, sym: "Sr", name: "Strontium", weight: "87.62", cat: "Alkaline Earth Metal"},
+            {num: 39, sym: "Y", name: "Yttrium", weight: "88.91", cat: "Transition Metal"},
+            {num: 40, sym: "Zr", name: "Zirconium", weight: "91.22", cat: "Transition Metal"},
+            {num: 41, sym: "Nb", name: "Niobium", weight: "92.91", cat: "Transition Metal"},
+            {num: 42, sym: "Mo", name: "Molybdenum", weight: "95.95", cat: "Transition Metal"},
+            {num: 43, sym: "Tc", name: "Technetium", weight: "98.00", cat: "Transition Metal"},
+            {num: 44, sym: "Ru", name: "Ruthenium", weight: "101.1", cat: "Transition Metal"},
+            {num: 45, sym: "Rh", name: "Rhodium", weight: "102.9", cat: "Transition Metal"},
+            {num: 46, sym: "Pd", name: "Palladium", weight: "106.4", cat: "Transition Metal"},
+            {num: 47, sym: "Ag", name: "Silver", weight: "107.9", cat: "Transition Metal"},
+            {num: 48, sym: "Cd", name: "Cadmium", weight: "112.4", cat: "Transition Metal"},
+            {num: 49, sym: "In", name: "Indium", weight: "114.8", cat: "Post-Transition Metal"},
+            {num: 50, sym: "Sn", name: "Tin", weight: "118.7", cat: "Post-Transition Metal"},
+            {num: 51, sym: "Sb", name: "Antimony", weight: "121.8", cat: "Metalloid"},
+            {num: 52, sym: "Te", name: "Tellurium", weight: "127.6", cat: "Metalloid"},
+            {num: 53, sym: "I", name: "Iodine", weight: "126.9", cat: "Halogen"},
+            {num: 54, sym: "Xe", name: "Xenon", weight: "131.3", cat: "Noble Gas"},
+            {num: 55, sym: "Cs", name: "Cesium", weight: "132.9", cat: "Alkali Metal"},
+            {num: 56, sym: "Ba", name: "Barium", weight: "137.3", cat: "Alkaline Earth Metal"},
+            {num: 57, sym: "La", name: "Lanthanum", weight: "138.9", cat: "Lanthanide"},
+            {num: 58, sym: "Ce", name: "Cerium", weight: "140.1", cat: "Lanthanide"},
+            {num: 59, sym: "Pr", name: "Praseodymium", weight: "140.9", cat: "Lanthanide"},
+            {num: 60, sym: "Nd", name: "Neodymium", weight: "144.2", cat: "Lanthanide"},
+            {num: 61, sym: "Pm", name: "Promethium", weight: "145.0", cat: "Lanthanide"},
+            {num: 62, sym: "Sm", name: "Samarium", weight: "150.4", cat: "Lanthanide"},
+            {num: 63, sym: "Eu", name: "Europium", weight: "152.0", cat: "Lanthanide"},
+            {num: 64, sym: "Gd", name: "Gadolinium", weight: "157.3", cat: "Lanthanide"},
+            {num: 65, sym: "Tb", name: "Terbium", weight: "158.9", cat: "Lanthanide"},
+            {num: 66, sym: "Dy", name: "Dysprosium", weight: "162.5", cat: "Lanthanide"},
+            {num: 67, sym: "Ho", name: "Holmium", weight: "164.9", cat: "Lanthanide"},
+            {num: 68, sym: "Er", name: "Erbium", weight: "167.3", cat: "Lanthanide"},
+            {num: 69, sym: "Tm", name: "Thulium", weight: "168.9", cat: "Lanthanide"},
+            {num: 70, sym: "Yb", name: "Ytterbium", weight: "173.1", cat: "Lanthanide"},
+            {num: 71, sym: "Lu", name: "Lutetium", weight: "175.0", cat: "Lanthanide"},
+            {num: 72, sym: "Hf", name: "Hafnium", weight: "178.5", cat: "Transition Metal"},
+            {num: 73, sym: "Ta", name: "Tantalum", weight: "180.9", cat: "Transition Metal"},
+            {num: 74, sym: "W", name: "Tungsten", weight: "183.8", cat: "Transition Metal"},
+            {num: 75, sym: "Re", name: "Rhenium", weight: "186.2", cat: "Transition Metal"},
+            {num: 76, sym: "Os", name: "Osmium", weight: "190.2", cat: "Transition Metal"},
+            {num: 77, sym: "Ir", name: "Iridium", weight: "192.2", cat: "Transition Metal"},
+            {num: 78, sym: "Pt", name: "Platinum", weight: "195.1", cat: "Transition Metal"},
+            {num: 79, sym: "Au", name: "Gold", weight: "197.0", cat: "Transition Metal"},
+            {num: 80, sym: "Hg", name: "Mercury", weight: "200.6", cat: "Transition Metal"},
+            {num: 81, sym: "Tl", name: "Thallium", weight: "204.4", cat: "Post-Transition Metal"},
+            {num: 82, sym: "Pb", name: "Lead", weight: "207.2", cat: "Post-Transition Metal"},
+            {num: 83, sym: "Bi", name: "Bismuth", weight: "209.0", cat: "Post-Transition Metal"},
+            {num: 84, sym: "Po", name: "Polonium", weight: "209.0", cat: "Metalloid"},
+            {num: 85, sym: "At", name: "Astatine", weight: "210.0", cat: "Halogen"},
+            {num: 86, sym: "Rn", name: "Radon", weight: "222.0", cat: "Noble Gas"},
+            {num: 87, sym: "Fr", name: "Francium", weight: "223.0", cat: "Alkali Metal"},
+            {num: 88, sym: "Ra", name: "Radium", weight: "226.0", cat: "Alkaline Earth Metal"},
+            {num: 89, sym: "Ac", name: "Actinium", weight: "227.0", cat: "Actinide"},
+            {num: 90, sym: "Th", name: "Thorium", weight: "232.0", cat: "Actinide"},
+            {num: 91, sym: "Pa", name: "Protactinium", weight: "231.0", cat: "Actinide"},
+            {num: 92, sym: "U", name: "Uranium", weight: "238.0", cat: "Actinide"},
+            {num: 93, sym: "Np", name: "Neptunium", weight: "237.0", cat: "Actinide"},
+            {num: 94, sym: "Pu", name: "Plutonium", weight: "244.0", cat: "Actinide"},
+            {num: 95, sym: "Am", name: "Americium", weight: "243.0", cat: "Actinide"},
+            {num: 96, sym: "Cm", name: "Curium", weight: "247.0", cat: "Actinide"},
+            {num: 97, sym: "Bk", name: "Berkelium", weight: "247.0", cat: "Actinide"},
+            {num: 98, sym: "Cf", name: "Californium", weight: "251.0", cat: "Actinide"},
+            {num: 99, sym: "Es", name: "Einsteinium", weight: "252.0", cat: "Actinide"},
+            {num: 100, sym: "Fm", name: "Fermium", weight: "257.0", cat: "Actinide"},
+            {num: 101, sym: "Md", name: "Mendelevium", weight: "258.0", cat: "Actinide"},
+            {num: 102, sym: "No", name: "Nobelium", weight: "259.0", cat: "Actinide"},
+            {num: 103, sym: "Lr", name: "Lawrencium", weight: "266.0", cat: "Actinide"},
+            {num: 104, sym: "Rf", name: "Rutherfordium", weight: "267.0", cat: "Transition Metal"},
+            {num: 105, sym: "Db", name: "Dubnium", weight: "268.0", cat: "Transition Metal"},
+            {num: 106, sym: "Sg", name: "Seaborgium", weight: "269.0", cat: "Transition Metal"},
+            {num: 107, sym: "Bh", name: "Bohrium", weight: "270.0", cat: "Transition Metal"},
+            {num: 108, sym: "Hs", name: "Hassium", weight: "277.0", cat: "Transition Metal"},
+            {num: 109, sym: "Mt", name: "Meitnerium", weight: "278.0", cat: "Transition Metal"},
+            {num: 110, sym: "Ds", name: "Darmstadtium", weight: "281.0", cat: "Transition Metal"},
+            {num: 111, sym: "Rg", name: "Roentgenium", weight: "282.0", cat: "Transition Metal"},
+            {num: 112, sym: "Cn", name: "Copernicium", weight: "285.0", cat: "Transition Metal"},
+            {num: 113, sym: "Nh", name: "Nihonium", weight: "286.0", cat: "Post-Transition Metal"},
+            {num: 114, sym: "Fl", name: "Flerovium", weight: "289.0", cat: "Post-Transition Metal"},
+            {num: 115, sym: "Mc", name: "Moscovium", weight: "290.0", cat: "Post-Transition Metal"},
+            {num: 116, sym: "Lv", name: "Livermorium", weight: "293.0", cat: "Post-Transition Metal"},
+            {num: 117, sym: "Ts", name: "Tennessine", weight: "294.0", cat: "Halogen"},
+            {num: 118, sym: "Og", name: "Oganesson", weight: "294.0", cat: "Noble Gas"}
+        ];
+        
+        let currentIndex = 0;
+
+        function showElement(index) {
+            const el = elements[index];
+            document.getElementById('counter').textContent = `Element ${index + 1} of ${elements.length}`;
+            document.getElementById('atomicNumberLabel').textContent = `Element #${el.num}`;
+            document.getElementById('symbol').textContent = el.sym;
+            document.getElementById('name').textContent = el.name;
+            document.getElementById('atomicNum').textContent = el.num;
+            document.getElementById('atomicWeight').textContent = el.weight;
+            document.getElementById('category').textContent = el.cat;
+
+            document.getElementById('prevBtn').disabled = (index === 0);
+            document.getElementById('nextBtn').disabled = (index === elements.length - 1);
+        }
+        
+        function nextElement() {
+            if (currentIndex < elements.length - 1) {
+                currentIndex++;
+                showElement(currentIndex);
+            }
+        }
+
+        function previousElement() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                showElement(currentIndex);
+            }
+        }
+
+        function exitApp() {
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('exitScreen').style.display = 'block';
+            document.querySelector('.exit-btn').style.display = 'none';
+        }
+        
+        showElement(0);
+    </script>
+</body>
+</html>
+           
+       
+
